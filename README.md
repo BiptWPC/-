@@ -5,74 +5,303 @@
 Test.java
 
 
-package pack1;
-
-public class Test {
-	public static void main(String args[]) {
-		CPU cpu = new CPU();
-		HardDisk HD=new HardDisk();
-		cpu.setSpeed(3000);
-		HD.setAmount(200);
-		PC pc =new PC();
-		pc.setCPU(cpu);
-		pc.setHardDisk(HD);
-		pc.show();
-		}
-	}
-
-
-PC.java
-
-
-package pack1;
-
-public class PC {
-	CPU cpu;
-	HardDisk HD;
-	void setCPU(CPU cpu) {
-		this.cpu = cpu;
-		}
-	void setHardDisk(HardDisk HD) {
-		this.HD = HD;
-		}
-	void show(){
-		System.out.println("CPU速度:"+cpu.getSpeed());
-		System.out.println("硬盘容量:"+HD.getAmount());
-		}
+public class Teacher {
+    private int id;
+    private String teacherName;
+private Course[] courses;
+    public Teacher() {
+        super();
+        courses= new Course[3];
+    }
+    public Teacher(int id,String teacherName){
+        this.id=id;
+        this.teacherName=teacherName;
+        courses = new Course[3];
 }
 
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getTeacherName() {
+        return teacherName;
+    }
+    public void setTeacherName(String teacherName) {
+        this.teacherName = teacherName;
+    }
 
 
-CPU.java
+}
+
+package test;
+
+public class Student {
+	private String stuName;
+    private int stuId;
+    private String major;
+    private Course[] courses;
+    //构造函数
+    public Student() {//不要忘
+        super();
+        courses = new Course[3];
+    }
+    public Student(int stuId,String stuName) {
+        super();
+        this.stuId=stuId;
+        this.stuName=stuName;
+        courses = new Course[3];
+    }
+    public Student(int stuId,String stuName,String major) {
+        super();
+        this.stuId=stuId;
+        this.stuName=stuName;
+        this.major = major;
+        courses = new Course[3];
+    }
+    //修改获取属性name,id,major
+    public String getStuName() {
+        return stuName;
+    }
+
+    public void setStuName(String stuName) {
+        this.stuName = stuName;
+    }
+    public int getStuId() {
+        return stuId;
+    }
+    public void setStuId(int stuId) {
+        this.stuId = stuId;
+    }
+    public String getMajor() {
+        return major;
+    }
+    public void setMajor(String major) {
+        this.major = major;
+    }
+    //学生选课；
+    public boolean addCourse(Course course){
+        boolean flag=false;
+        if(!isSelectedCourse(course)&&isNullCourse(course)){
+            for(int i=0;i<this.courses.length;i++){
+                if(courses[i]==null){
+                    courses[i]=course;
+                    course.addStudent(this);//课程也要添加学生
+                    flag=true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+    //学生移除课程
+    public boolean removeCourse(Course course){
+        boolean flag=false;
+        if(isSelectedCourse(course)){
+            for(int i=0;i<this.courses.length;i++){
+                if(courses[i]==course){
+                    courses[i]=null;
+                    course.removeStudent(this);//在课程中移除学生
+                    flag=true;
+                    break;
+                }
+            }
+
+        }
+        return flag;
+    }
+    //显示学生所选的课程
+    public void displayCourse(){
+        System.out.println("学生"+this.stuName+"所选课程有：");
+        for(Course c:courses){
+            if(c!=null){
+                System.out.print(c.getName()+" ");
+            }
+        }
+        System.out.println();
+    }
+
+    //子方法1：课是否被选过
+    public boolean isSelectedCourse(Course course){
+        boolean flag=false;
+        for(Course c:courses){
+            if(c==course){
+                flag=true;
+                break;
+            }
+        }
+        return flag;
+    }
+    //子方法2：学生是否还有选修课位置
+    public boolean isNullCourse(Course course){
+        boolean flag=false;
+        for(Course c:courses){
+            if(c==null){
+                flag=true;
+                break;
+            }
+        }
+        return flag;
+    }
 
 
-package pack1;
+}
 
-public class CPU {
-	int speed; 
-	int getSpeed() {
-		return speed;
-		}
-	public void setSpeed(int speed) {
-		this.speed = speed;
-		}
-	}
+package test;
+
+public class Course {
+	private String courseName;
+    private int courseId;
+    private Teacher teacher;
+    private float credit;
+    private Student[] students;
+    public Course(int courseId,String courseName,float credit,Teacher teacher) {
+        super();
+        this.courseId=courseId;
+        this.courseName=courseName;
+        this.credit=credit;
+        this.setTeacher(teacher);
+        students = new Student[30];
+    }
+    public Course(int courseId,String courseName,float credit) {
+        super();
+        this.courseId=courseId;
+        this.courseName=courseName;
+        this.credit=credit;
+        students = new Student[30];
+    }
+
+    public Course(int courseId,String courseName) {
+        super();
+        this.courseId=courseId;
+        this.courseName=courseName;
+        students = new Student[30];
+    }
+
+    public Course() {
+        super();
+        students = new Student[30];
+    }
+
+    public void setId(int id){
+        this.courseId=id;
+    }
+    public int getId(){
+        return this.courseId;
+    }
+    public void setName(String name){
+        this.courseName=name;
+    }
+    public String getName(){
+        return this.courseName;
+    }
+    public void setCredit(float credit ){
+        this.credit=credit;
+    }
+    public float getCredit(){
+        return this.credit;
+    }
+    public Teacher getTeacher() {
+        return teacher;
+    }
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public boolean addStudent(Student stu){
+        boolean flag = false;
+        if(!isSelectedStudent(stu)&&isNullStudent(stu)){
+            for(int i=0;i<students.length;i++){
+                if(students[i]==null){
+                    students[i]=stu;
+                    flag=true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+    
+    public boolean removeStudent(Student stu){
+        boolean flag=false;
+        if(isSelectedStudent(stu)){
+            for(int i=0;i<students.length;i++){
+                if(students[i]==stu){
+                    students[i]=null;
+                    flag=true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+   
+    public void displayStudent(){
+        System.out.println("Ñ¡ÔñµÄ¿Î³Ì£º"+this.courseName+"µÄÑ§ÉúÓÐ:");
+        for(Student s:students){
+            if(s!=null){
+                System.out.print(s.getStuName()+" ");
+            }
+        }
+        System.out.println();
+    }
+   
+    public boolean isSelectedStudent(Student stu){
+        boolean flag=false;
+        for(Student s:students){
+            if(s==stu){
+                flag=true;
+                break;
+            }
+        }
+        return flag;
+    }
+   
+    public boolean isNullStudent(Student stu){
+        boolean flag=false;
+        for(Student s:students){
+            if(s==null){
+                flag=true;
+                break;
+            }
+        }
+        return flag;
+    }
+    public static void main(String[] args) {
+      
+    }
 
 
+}
 
-HardDisk.java
+package test;
 
-package pack1;
+public class ChooseCourse {
+	public static void main(String[] args) {
+        Student stu0 = new Student(1001,"Lily");
+        Student stu1 = new Student(1002,"Eilly");
+        Student stu2 = new Student(1003,"Floris");
+        Student stu3 = new Student(1004,"HaHa");
+        Course cour0 = new Course(001,"¸ßÊý");
+        Course cour1 = new Course(002,"Ïß´ú");
+        Course cour2 = new Course(003,"¸ÅÂÊÂÛ");
+        stu0.addCourse(cour0);
+        stu0.addCourse(cour2);
+        stu0.addCourse(cour1);
+        stu1.addCourse(cour2);
+        stu1.addCourse(cour0);
+        stu2.addCourse(cour1);
+        stu3.addCourse(cour0);
+        stu3.addCourse(cour1);
+        stu1.removeCourse(cour2);
+        stu0.displayCourse();
+        cour0.removeStudent(stu1);
+        cour1.displayStudent();
+    }
 
-public class HardDisk {
-	int amount; 
-	int getAmount() {
-		return amount;
-		}
-	public void setAmount(int amount) {
-		this.amount = amount;
-		}
-	}
+
+}
   
 ## 实验目的
 初步了解分析系统需求，从学生选课角度了解系统中的实体及其关系，学会定义类中的属性以及方法；
